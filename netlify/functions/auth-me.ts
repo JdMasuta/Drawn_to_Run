@@ -1,7 +1,7 @@
 // Get current user profile endpoint
 import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import { requireAuth } from '../_shared/auth.js';
-import { responses, corsResponse } from '../_shared/response.js';
+import { requireAuth } from './_shared/auth.js';
+import { responses, corsResponse } from './_shared/response.js';
 
 const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
   // Handle CORS preflight

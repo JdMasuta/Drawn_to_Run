@@ -75,7 +75,7 @@ export const schemas = {
     date_from: z.string().datetime().optional(),
     date_to: z.string().datetime().optional(),
     tags: z.string().optional(), // comma-separated tag IDs
-    sort: z.enum(['date', 'title', 'location', 'created_at']).default('date'),
+    sort: z.enum(['date', 'event_date', 'title', 'location', 'created_at']).default('event_date'),
     order: z.enum(['asc', 'desc']).default('asc'),
   }),
 

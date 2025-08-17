@@ -164,7 +164,7 @@ export interface EventQueryParams {
   date_from?: string;
   date_to?: string;
   tags?: string; // comma-separated tag IDs
-  sort?: 'date' | 'title' | 'location' | 'created_at';
+  sort?: 'date' | 'event_date' | 'title' | 'location' | 'created_at';
   order?: 'asc' | 'desc';
 }
 

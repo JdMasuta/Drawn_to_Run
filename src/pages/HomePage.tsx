@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   return (
@@ -46,9 +47,12 @@ const HomePage: React.FC = () => {
         </div>
 
         <div className="text-center">
-          <button className="btn btn-primary text-lg px-8 py-3">
+          <Link 
+            to="/events"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg px-8 py-3 rounded-md transition-colors"
+          >
             Explore Events
-          </button>
+          </Link>
         </div>
       </div>
     </div>

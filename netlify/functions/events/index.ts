@@ -29,8 +29,8 @@ const handler: Handler = async (event: HandlerEvent, context: HandlerContext) =>
 async function getEvents(event: HandlerEvent) {
   try {
     // Parse and validate query parameters
-    const queryParams = parseQueryParams(event.rawUrl || `${event.headers.host}${event.path}?${event.rawQuery || ''}`);
-    const validation = validateInput(schemas.eventQuery, queryParams);
+    const urlParams = parseQueryParams(event.rawUrl || `${event.headers.host}${event.path}?${event.rawQuery || ''}`);
+    const validation = validateInput(schemas.eventQuery, urlParams);
     
     if (!validation.success) {
       return validation.response;
@@ -111,6 +111,7 @@ async function getEvents(event: HandlerEvent) {
     // Add sorting
     const sortMap: Record<string, string> = {
       date: 'e.event_date',
+      event_date: 'e.event_date',
       title: 'e.title',
       location: 'e.location',
       created_at: 'e.created_at',
