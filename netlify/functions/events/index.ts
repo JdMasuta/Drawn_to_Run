@@ -184,12 +184,18 @@ async function getEvents(event: HandlerEvent) {
       registration_count: parseInt(event.registration_count || '0'),
     }));
 
-    return responses.ok(eventsWithTags, {
-      page,
-      limit,
-      total,
-      totalPages,
-    });
+    // Return data in expected EventListResponse format
+    const responseData = {
+      events: eventsWithTags,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+      }
+    };
+
+    return responses.ok(responseData);
 
   } catch (error) {
     console.error('Get events error:', error);
