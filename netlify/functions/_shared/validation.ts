@@ -65,6 +65,11 @@ export const schemas = {
     email: z.string().email('Invalid email address'),
   }),
 
+  // Tag assignment schema
+  assignTags: z.object({
+    tagIds: z.array(z.number().int().positive()).min(1, 'At least one tag ID is required'),
+  }),
+
   // Query parameter schemas
   eventQuery: z.object({
     page: z.coerce.number().int().positive().default(1),

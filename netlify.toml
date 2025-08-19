@@ -27,6 +27,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/tags"
+  to = "/.netlify/functions/tags"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useEvents, useRegisterForEvent } from '../hooks/useEvents';
 import { useAuth } from '../hooks/useAuth';
 import { EventCard } from '../components/events/EventCard';
+import { FilterSidebar } from '../components/events/FilterSidebar';
 import type { EventQueryParams } from '../types/api';
 
 const EventsPage: React.FC = () => {
@@ -34,28 +35,8 @@ const EventsPage: React.FC = () => {
     }
   };
 
-  const handleSearchChange = (search: string) => {
-    setFilters(prev => ({ ...prev, search, page: 1 }));
-  };
-
-  const handleDistanceFilter = (distance: string, checked: boolean) => {
-    setFilters(prev => {
-      const currentDistance = prev.distance || '';
-      const distances = currentDistance.split(',').filter(Boolean);
-      
-      if (checked) {
-        distances.push(distance);
-      } else {
-        const index = distances.indexOf(distance);
-        if (index > -1) distances.splice(index, 1);
-      }
-      
-      return {
-        ...prev,
-        distance: distances.join(',') || undefined,
-        page: 1
-      };
-    });
+  const handleFiltersChange = (newFilters: EventQueryParams) => {
+    setFilters(newFilters);
   };
 
   return (
@@ -71,83 +52,10 @@ const EventsPage: React.FC = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <div className="lg:w-1/4">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Search
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Search events..."
-                    value={filters.search || ''}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Distance
-                  </label>
-                  <div className="space-y-2">
-                    {['5K', '10K', 'Half Marathon', 'Marathon'].map((distance) => {
-                      const isChecked = filters.distance?.split(',').includes(distance) || false;
-                      return (
-                        <label key={distance} className="flex items-center">
-                          <input 
-                            type="checkbox" 
-                            className="mr-2"
-                            checked={isChecked}
-                            onChange={(e) => handleDistanceFilter(distance, e.target.checked)}
-                          />
-                          <span className="text-sm text-gray-600">{distance}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sort By
-                  </label>
-                  <select 
-                    value={`${filters.sort}-${filters.order}`}
-                    onChange={(e) => {
-                      const [sort, order] = e.target.value.split('-');
-                      setFilters(prev => ({ 
-                        ...prev, 
-                        sort: sort as EventQueryParams['sort'], 
-                        order: order as EventQueryParams['order']
-                      }));
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="event_date-asc">Date (Earliest)</option>
-                    <option value="event_date-desc">Date (Latest)</option>
-                    <option value="title-asc">Title (A-Z)</option>
-                    <option value="title-desc">Title (Z-A)</option>
-                    <option value="created_at-desc">Recently Added</option>
-                  </select>
-                </div>
-
-                {/* Clear Filters */}
-                <button
-                  onClick={() => setFilters({
-                    page: 1,
-                    limit: 12,
-                    sort: 'event_date',
-                    order: 'asc',
-                  })}
-                  className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            </div>
+            <FilterSidebar
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+            />
           </div>
 
           {/* Events Grid */}
@@ -185,6 +93,8 @@ const EventsPage: React.FC = () => {
                 <div className="mb-6 text-sm text-gray-600">
                   Showing {eventsData.events.length} of {eventsData.meta.total} events
                   {filters.search && ` for "${filters.search}"`}
+                  {filters.tags && ` with selected tags`}
+                  {filters.location && ` in "${filters.location}"`}
                 </div>
 
                 {/* Events grid */}
@@ -236,12 +146,17 @@ const EventsPage: React.FC = () => {
                 <p className="mt-1 text-sm text-gray-500">
                   {filters.search ? 'Try adjusting your search or filters.' : 'Check back later for new events.'}
                 </p>
-                {filters.search && (
+                {(filters.search || filters.tags || filters.location || filters.distance) && (
                   <button
-                    onClick={() => setFilters(prev => ({ ...prev, search: undefined, page: 1 }))}
+                    onClick={() => setFilters({
+                      page: 1,
+                      limit: 12,
+                      sort: 'event_date',
+                      order: 'asc',
+                    })}
                     className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium"
                   >
-                    Clear search
+                    Clear all filters
                   </button>
                 )}
               </div>

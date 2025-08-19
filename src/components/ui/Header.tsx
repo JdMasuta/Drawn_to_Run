@@ -43,6 +43,19 @@ const Header: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-4">
+            {/* Create Event Button for Organizers/Admins */}
+            {isAuthenticated && (user?.role === 'organizer' || user?.role === 'admin') && (
+              <Link
+                to="/events/create"
+                className="hidden md:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Create Event
+              </Link>
+            )}
+
             {isAuthenticated ? (
               // Authenticated user menu
               <div className="relative">
@@ -192,6 +205,15 @@ const Header: React.FC = () => {
               {isAuthenticated ? (
                 <>
                   <hr className="my-2" />
+                  {(user?.role === 'organizer' || user?.role === 'admin') && (
+                    <Link
+                      to="/events/create"
+                      className="bg-blue-600 hover:bg-blue-700 text-white block px-3 py-2 rounded-md text-base font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Create Event
+                    </Link>
+                  )}
                   <Link
                     to="/profile"
                     className="text-gray-500 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
