@@ -3,22 +3,32 @@ import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { UserAvatar } from '../components/ui/UserAvatar';
+import { FollowButton } from '../components/ui/FollowButton';
 import { ProfileEditForm } from '../components/profile/ProfileEditForm';
 import { UserEventHistory } from '../components/profile/UserEventHistory';
 import { UserRegistrations } from '../components/profile/UserRegistrations';
 import { UserStats } from '../components/profile/UserStats';
+import { FollowersList } from '../components/profile/FollowersList';
+import { FollowingList } from '../components/profile/FollowingList';
 
-type TabType = 'overview' | 'events' | 'registrations' | 'edit';
+type TabType = 'overview' | 'events' | 'registrations' | 'followers' | 'following' | 'edit';
 
 const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
+  
+  // Get user ID from URL params for viewing other profiles
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileUserId = urlParams.get('id') ? parseInt(urlParams.get('id')!) : user?.id;
+  const isOwnProfile = !profileUserId || profileUserId === user?.id;
 
   const tabs = [
     { id: 'overview' as TabType, label: 'Overview', icon: '👤' },
-    { id: 'events' as TabType, label: 'My Events', icon: '🏃' },
+    { id: 'events' as TabType, label: isOwnProfile ? 'My Events' : 'Events', icon: '🏃' },
     { id: 'registrations' as TabType, label: 'Registrations', icon: '📝' },
-    { id: 'edit' as TabType, label: 'Edit Profile', icon: '⚙️' },
+    { id: 'followers' as TabType, label: 'Followers', icon: '👥' },
+    { id: 'following' as TabType, label: 'Following', icon: '👤' },
+    ...(isOwnProfile ? [{ id: 'edit' as TabType, label: 'Edit Profile', icon: '⚙️' }] : []),
   ];
 
   const renderTabContent = () => {
@@ -31,38 +41,52 @@ const ProfilePage: React.FC = () => {
               <div className="flex flex-col md:flex-row md:items-center gap-6">
                 <UserAvatar user={user} size="xl" />
                 <div className="flex-1">
-                  <h1 className="text-2xl font-bold text-gray-900">{user?.name}</h1>
-                  <p className="text-gray-600 mt-1">{user?.email}</p>
-                  {user?.bio && (
-                    <p className="text-gray-700 mt-3">{user.bio}</p>
-                  )}
-                  <div className="mt-4">
-                    <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                      user?.role === 'admin' ? 'bg-red-100 text-red-800' :
-                      user?.role === 'organizer' ? 'bg-blue-100 text-blue-800' :
-                      'bg-green-100 text-green-800'
-                    }`}>
-                      {user?.role?.charAt(0).toUpperCase()}{user?.role?.slice(1)}
-                    </span>
-                    {!user?.email_verified && (
-                      <span className="ml-2 px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800">
-                        Email not verified
-                      </span>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div>
+                      <h1 className="text-2xl font-bold text-gray-900">{user?.name}</h1>
+                      <p className="text-gray-600 mt-1">{user?.email}</p>
+                      {user?.bio && (
+                        <p className="text-gray-700 mt-3">{user.bio}</p>
+                      )}
+                      <div className="mt-4">
+                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                          user?.role === 'admin' ? 'bg-red-100 text-red-800' :
+                          user?.role === 'organizer' ? 'bg-blue-100 text-blue-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {user?.role?.charAt(0).toUpperCase()}{user?.role?.slice(1)}
+                        </span>
+                        {!user?.email_verified && (
+                          <span className="ml-2 px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800">
+                            Email not verified
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-4 text-sm text-gray-500">
+                        Member since {new Date(user?.created_at || '').toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </div>
+                    </div>
+                    
+                    {/* Follow Button for other users' profiles */}
+                    {!isOwnProfile && profileUserId && (
+                      <div className="flex-shrink-0">
+                        <FollowButton 
+                          targetUserId={profileUserId}
+                          size="medium"
+                        />
+                      </div>
                     )}
-                  </div>
-                  <div className="mt-4 text-sm text-gray-500">
-                    Member since {new Date(user?.created_at || '').toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Stats Section */}
-            <UserStats />
+            <UserStats userId={profileUserId} />
 
             {/* Recent Activity */}
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -84,8 +108,14 @@ const ProfilePage: React.FC = () => {
       case 'registrations':
         return <UserRegistrations />;
 
+      case 'followers':
+        return <FollowersList userId={profileUserId!} />;
+
+      case 'following':
+        return <FollowingList userId={profileUserId!} />;
+
       case 'edit':
-        return <ProfileEditForm />;
+        return isOwnProfile ? <ProfileEditForm /> : null;
 
       default:
         return null;
@@ -98,9 +128,14 @@ const ProfilePage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {isOwnProfile ? 'My Profile' : `${user?.name}'s Profile`}
+            </h1>
             <p className="mt-2 text-gray-600">
-              Manage your profile, view your events, and track your running journey
+              {isOwnProfile 
+                ? 'Manage your profile, view your events, and track your running journey'
+                : 'View profile, events, and running activity'
+              }
             </p>
           </div>
 

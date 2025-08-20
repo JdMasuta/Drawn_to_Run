@@ -1,6 +1,35 @@
 // UserStats component - Display user statistics and achievements
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../hooks/useAuth';
+
+interface UserStatsProps {
+  userId?: number;
+}
+
+interface FollowCounts {
+  followers: number;
+  following: number;
+}
+
+const getFollowCounts = async (userId: number): Promise<FollowCounts> => {
+  const response = await fetch(`/api/users/${userId}/follow`, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+
+  if (!response.ok) {
+    // If user is not authenticated or follow status cannot be determined, return 0s
+    return { followers: 0, following: 0 };
+  }
+
+  const data = await response.json();
+  return {
+    followers: data.followerCount || 0,
+    following: data.followingCount || 0,
+  };
+};
 
 interface StatCardProps {
   title: string;
@@ -36,8 +65,17 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, subtitle
   );
 };
 
-export const UserStats: React.FC = () => {
+export const UserStats: React.FC<UserStatsProps> = ({ userId }) => {
   const { user } = useAuth();
+  const targetUserId = userId || user?.id;
+
+  // Get follow counts
+  const { data: followCounts } = useQuery({
+    queryKey: ['followCounts', targetUserId],
+    queryFn: () => getFollowCounts(targetUserId!),
+    enabled: !!targetUserId,
+    initialData: { followers: 0, following: 0 },
+  });
 
   // Mock stats for now - in real implementation, these would come from API
   const stats = {
@@ -59,10 +97,34 @@ export const UserStats: React.FC = () => {
       {/* Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
+          title="Followers"
+          value={followCounts?.followers || 0}
+          subtitle="Total followers"
+          color="blue"
+          icon={
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          }
+        />
+
+        <StatCard
+          title="Following"
+          value={followCounts?.following || 0}
+          subtitle="People following"
+          color="green"
+          icon={
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          }
+        />
+
+        <StatCard
           title="Total Registrations"
           value={stats.totalRegistrations}
           subtitle="All time"
-          color="blue"
+          color="purple"
           icon={
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -71,22 +133,10 @@ export const UserStats: React.FC = () => {
         />
 
         <StatCard
-          title="Upcoming Events"
-          value={stats.upcomingEvents}
-          subtitle="Next 30 days"
-          color="green"
-          icon={
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          }
-        />
-
-        <StatCard
           title="Completed Races"
           value={stats.completedRaces}
           subtitle="All time"
-          color="purple"
+          color="orange"
           icon={
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />

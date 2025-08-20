@@ -98,6 +98,15 @@ CREATE TABLE media (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- User follows table (many-to-many relationship)
+CREATE TABLE user_follows (
+    follower_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    following_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, following_id),
+    CONSTRAINT no_self_follow CHECK (follower_id != following_id)
+);
+
 -- Indexes for performance
 CREATE INDEX idx_events_date ON events(event_date);
 CREATE INDEX idx_events_location ON events(location);
@@ -108,3 +117,5 @@ CREATE INDEX idx_comments_event_id ON comments(event_id);
 CREATE INDEX idx_comments_user_id ON comments(user_id);
 CREATE INDEX idx_media_event_id ON media(event_id);
 CREATE INDEX idx_media_user_id ON media(user_id);
+CREATE INDEX idx_user_follows_follower_id ON user_follows(follower_id);
+CREATE INDEX idx_user_follows_following_id ON user_follows(following_id);
