@@ -29,6 +29,6 @@ dist-ssr
 # Environment Variables
 .env
 
-# Unit Tests
-*.test.ts
-*.test.tsx
+# Test artifacts (but keep test files)
+coverage/
+*.lcov
