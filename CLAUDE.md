@@ -477,3 +477,43 @@ public/
 - Community engagement (comments, follows)
 - Page load times and performance scores
 - Mobile usage and conversion rates
+
+## Development Workflow Standard
+
+### Progress Saving Protocol
+
+After completing each major feature or step in the implementation roadmap, follow this workflow:
+
+1. **Update Todo List**: Mark completed tasks and update progress tracking using TodoWrite tool
+2. **Create Git Commits**: 
+   - Organize changes into logical, focused commits
+   - Use descriptive commit messages following the pattern: "Feature: [description]"
+   - Include comprehensive commit descriptions explaining what was implemented
+   - Always include co-authorship attribution:
+     ```
+     🤖 Generated with [Claude Code](https://claude.ai/code)
+     
+     Co-Authored-By: Claude <noreply@anthropic.com>
+     ```
+3. **Deploy to Netlify**: 
+   - Run `npm run build` to verify no errors
+   - Deploy using `netlify deploy --prod`
+   - Verify deployment succeeds
+4. **Update Documentation**: Keep CLAUDE.md and other documentation current with changes
+
+### Benefits of This Workflow
+
+- **Progress is never lost**: Regular commits ensure work is preserved
+- **Changes are properly tracked**: Git history provides clear development timeline  
+- **Production stays current**: Frequent deployments keep live site up-to-date
+- **Quality assurance**: Build verification catches issues early
+- **Team collaboration**: Clear commit messages and co-authorship tracking
+
+### When to Apply This Workflow
+
+- After completing any major feature (Steps 1-16 in the implementation plan)
+- After significant bug fixes or improvements
+- Before switching to work on different feature areas
+- At natural stopping points in development
+
+This workflow ensures consistent, reliable development practices and maintains project momentum.
