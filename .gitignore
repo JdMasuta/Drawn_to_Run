@@ -28,3 +28,7 @@ dist-ssr
 
 # Environment Variables
 .env
+
+# Unit Tests
+*.test.ts
+*.test.tsx

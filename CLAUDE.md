@@ -480,12 +480,23 @@ public/
 
 ## Development Workflow Standard
 
-### Progress Saving Protocol
+### Enhanced Step Completion Protocol
 
-After completing each major feature or step in the implementation roadmap, follow this workflow:
+After completing each major feature or step in the implementation roadmap, follow this comprehensive workflow:
 
-1. **Update Todo List**: Mark completed tasks and update progress tracking using TodoWrite tool
-2. **Create Git Commits**: 
+1. **Complete Functional Implementation**: Build the feature according to specifications
+2. **Write and Run Unit Tests**: 
+   - Achieve minimum 80% test coverage for new code
+   - Test all critical paths and edge cases
+   - Use Jest + React Testing Library for frontend, Jest for backend
+   - Mock external dependencies and API calls
+3. **Run Security Audit** (for security-sensitive steps):
+   - Validate authentication and authorization
+   - Check input validation and sanitization
+   - Review API endpoint security
+   - Verify data protection measures
+4. **Update Todo List**: Mark completed tasks and update progress tracking using TodoWrite tool
+5. **Create Git Commits**: 
    - Organize changes into logical, focused commits
    - Use descriptive commit messages following the pattern: "Feature: [description]"
    - Include comprehensive commit descriptions explaining what was implemented
@@ -495,14 +506,67 @@ After completing each major feature or step in the implementation roadmap, follo
      
      Co-Authored-By: Claude <noreply@anthropic.com>
      ```
-3. **Deploy to Netlify**: 
+6. **Deploy to Netlify**: 
    - Run `npm run build` to verify no errors
    - Deploy using `netlify deploy --prod`
    - Verify deployment succeeds
-4. **Update Documentation**: Keep CLAUDE.md and other documentation current with changes
+7. **Update Documentation**: Keep CLAUDE.md and other documentation current with changes
 
-### Benefits of This Workflow
+### Testing Framework Setup
 
+**Frontend Testing (React Components):**
+```bash
+npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event
+```
+
+**Test Structure:**
+- `src/__tests__/` - Component tests
+- `src/components/**/*.test.tsx` - Co-located component tests
+- `src/hooks/**/*.test.ts` - Hook tests
+- `netlify/functions/**/*.test.ts` - API endpoint tests
+
+**Coverage Requirements:**
+- Minimum 80% line coverage for new code
+- 100% coverage for critical paths (authentication, payments, data validation)
+- All user interactions must be tested
+- All error handling paths must be tested
+
+### Security Audit Checklist
+
+**Authentication & Authorization:**
+- [ ] JWT tokens have proper expiration and refresh mechanisms
+- [ ] Password hashing uses bcrypt with proper salt rounds
+- [ ] Role-based access controls are enforced
+- [ ] Session management prevents hijacking
+- [ ] Protected routes validate authentication server-side
+
+**Input Validation:**
+- [ ] All user inputs are validated and sanitized
+- [ ] SQL injection prevention (parameterized queries)
+- [ ] XSS protection (input encoding, CSP headers)
+- [ ] File upload restrictions (type, size, scanning)
+- [ ] API rate limiting implemented
+
+**Data Protection:**
+- [ ] Sensitive data encrypted at rest and in transit
+- [ ] API endpoints require proper authorization
+- [ ] Database access uses least privilege principle
+- [ ] Error messages don't leak sensitive information
+- [ ] Audit logs capture security events
+
+**Steps Requiring Security Audit:**
+- Step 3: Authentication System
+- Step 4: Event Management (user data, authorization)
+- Step 7: Community Features (user interactions, profiles)
+- Step 8: Strava Integration (OAuth, external APIs)
+- Step 10: Email System (template injection, spam)
+- Step 11: Media Management (file uploads)
+- Step 12: Instagram Integration (API keys, data privacy)
+
+### Benefits of This Enhanced Workflow
+
+- **High Code Quality**: Unit tests catch regressions and ensure reliability
+- **Security by Design**: Regular audits prevent vulnerabilities
 - **Progress is never lost**: Regular commits ensure work is preserved
 - **Changes are properly tracked**: Git history provides clear development timeline  
 - **Production stays current**: Frequent deployments keep live site up-to-date
@@ -516,4 +580,4 @@ After completing each major feature or step in the implementation roadmap, follo
 - Before switching to work on different feature areas
 - At natural stopping points in development
 
-This workflow ensures consistent, reliable development practices and maintains project momentum.
+This enhanced workflow ensures consistent, reliable, and secure development practices while maintaining project momentum.

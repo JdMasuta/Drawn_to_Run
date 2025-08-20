@@ -9,7 +9,9 @@
       "Bash(netlify init:*)",
       "Bash(git init:*)",
       "mcp__neon__list_projects",
-      "mcp__neon__get_connection_string"
+      "mcp__neon__get_connection_string",
+      "Bash(git add:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []
