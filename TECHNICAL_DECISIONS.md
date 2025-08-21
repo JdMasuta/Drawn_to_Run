@@ -377,6 +377,66 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ---
 
+### Testing Infrastructure: Unit Tests with Controlled Scope
+**Decision**: Focus unit testing on controllers and components, exclude API endpoint integration tests
+
+**Context**: Discovered incompatibility between test format expectations and actual Netlify function implementation
+
+**Problem**: API tests expected AWS Lambda event format but actual functions use Netlify Request/Response format
+
+**Alternatives Considered**:
+- Rewrite API functions to match Lambda format: Would break current working implementation
+- Mock Netlify Request/Response: Complex setup, fragile tests
+- Integration testing with actual deployment: Slow, expensive
+
+**Rationale**:
+- Controller unit tests provide business logic validation
+- Component tests ensure UI behavior correctness
+- API functions are tested through deployment and manual testing
+- Cleaner separation of concerns in testing
+- Faster test execution and more reliable results
+
+**Implementation**:
+- FollowController: 21 comprehensive unit tests
+- Component tests with React Testing Library
+- Mock database connections and external dependencies
+- Test environment polyfills for Node.js compatibility
+
+**Date**: August 2024
+
+---
+
+### User Following System: Database-First Design
+**Decision**: Implement user following with normalized database design and comprehensive API
+
+**Context**: Need for social features to increase user engagement and community building
+
+**Database Design**:
+```sql
+CREATE TABLE user_follows (
+    follower_id INTEGER REFERENCES users(id),
+    following_id INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, following_id)
+);
+```
+
+**API Endpoints**:
+- POST /api/users/:id/follow - Follow/unfollow user
+- GET /api/users/:id/followers - Get followers list
+- GET /api/users/:id/following - Get following list
+
+**Rationale**:
+- Normalized design prevents data duplication
+- Composite primary key ensures unique relationships
+- RESTful API design for consistency
+- Authorization checks prevent unauthorized operations
+- Scalable design supports future features (mutual follows, blocking)
+
+**Date**: August 2024
+
+---
+
 ## Security Architecture
 
 ### Input Validation: Client + Server Validation

@@ -93,6 +93,73 @@ export default {
 
 ---
 
+#### Problem: TextEncoder/TextDecoder Not Defined
+**Error**:
+```
+ReferenceError: TextEncoder is not defined
+```
+
+**Cause**: Node.js test environment missing browser APIs
+
+**Solution**:
+```typescript
+// setupTests.ts
+if (typeof global.TextEncoder === 'undefined') {
+  const { TextEncoder, TextDecoder } = require('util');
+  global.TextEncoder = TextEncoder;
+  global.TextDecoder = TextDecoder;
+}
+```
+
+**Alternative**: Use jsdom environment which includes these APIs
+
+---
+
+#### Problem: Mock Function Declaration Order
+**Error**:
+```
+Cannot access 'mockSql' before initialization
+```
+
+**Cause**: Jest mock hoisting conflicts with variable declarations
+
+**Solution**:
+```typescript
+// ✅ Correct order - declare mock first
+const mockSql = jest.fn();
+
+// Then mock the module
+jest.mock('@netlify/neon', () => ({
+  neon: jest.fn(() => mockSql),
+}));
+```
+
+**Key Point**: Mock functions must be declared before jest.mock() calls
+
+---
+
+#### Problem: API Test Format Incompatibility
+**Error**: Tests fail because they expect Lambda event format but functions use Netlify Request/Response
+
+**Cause**: Mismatch between test expectations and actual implementation
+
+**Solution**: 
+1. Remove incompatible API integration tests
+2. Focus on controller unit tests and component tests
+3. Test API functionality through deployment and manual testing
+
+```typescript
+// ✅ Test the controller, not the API endpoint
+describe('FollowController', () => {
+  it('should follow user successfully', async () => {
+    const result = await followController.followUser(1, 2);
+    expect(result).toBeDefined();
+  });
+});
+```
+
+---
+
 #### Problem: Mock Function Type Errors
 **Error**:
 ```

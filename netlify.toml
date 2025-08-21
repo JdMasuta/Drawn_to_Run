@@ -32,6 +32,21 @@
   status = 200
 
 [[redirects]]
+  from = "/api/users/*/follow"
+  to = "/.netlify/functions/users/:id/follow"
+  status = 200
+
+[[redirects]]
+  from = "/api/users/*/followers"
+  to = "/.netlify/functions/users/:id/followers"
+  status = 200
+
+[[redirects]]
+  from = "/api/users/*/following"
+  to = "/.netlify/functions/users/:id/following"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
