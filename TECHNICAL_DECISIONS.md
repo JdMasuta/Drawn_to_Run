@@ -530,6 +530,92 @@ netlify/functions/
 
 ---
 
+### PostgreSQL Array Type Handling in Complex Queries
+**Decision**: Ensure consistent array element types in PostgreSQL queries, especially in recursive CTEs
+
+**Context**: Comments API failed with "ARRAY types timestamp without time zone and text cannot be matched" error
+
+**Problem**: 
+- Recursive CTE query attempted to create arrays with mixed types: `ARRAY[c.created_at, c.id::text]`
+- PostgreSQL requires all array elements to be the same type
+- Complex recursive queries can obscure type mismatch issues
+
+**Solution**:
+- Convert all array elements to consistent type: `ARRAY[c.created_at::text, c.id::text]`
+- Apply type consistency to both base case and recursive case in CTEs
+- Use explicit type casting to prevent implicit type conflicts
+
+**Rationale**:
+- PostgreSQL's type safety prevents runtime data corruption
+- Explicit type casting makes query intent clear
+- Consistent types enable proper array operations and indexing
+- Better error prevention than runtime type checking
+
+**Implementation Pattern**:
+```sql
+-- ❌ Problematic: Mixed types
+ARRAY[timestamp_col, id_col::text]
+
+-- ✅ Correct: Consistent types  
+ARRAY[timestamp_col::text, id_col::text]
+
+-- ✅ Alternative: Keep as timestamps if appropriate
+ARRAY[timestamp_col, other_timestamp_col]
+```
+
+**Debugging Approach**:
+- Enhanced error logging revealed exact PostgreSQL error message
+- Systematic debugging isolated the specific query causing failure
+- Type-specific error messages guided to precise solution
+
+**Date**: August 30, 2024
+
+---
+
+### Systematic API Debugging Methodology
+**Decision**: Establish comprehensive debugging approach for complex serverless function failures
+
+**Context**: Generic INTERNAL_ERROR messages provided insufficient diagnostic information
+
+**Approach**:
+1. **Enhanced Error Logging**: Add detailed logging at each major step (entry, parsing, DB connection, queries)
+2. **Systematic Isolation**: Test each component independently to identify exact failure point
+3. **Error Message Enhancement**: Temporarily expose detailed error messages during debugging
+4. **Incremental Verification**: Deploy and test each fix iteration
+5. **Clean Deployment**: Remove debugging code after resolution
+
+**Benefits**:
+- Rapid root cause identification for complex issues
+- Reproducible methodology for future debugging sessions
+- Improved error handling and user experience
+- Knowledge preservation through detailed documentation
+
+**Implementation Guidelines**:
+```typescript
+// Add comprehensive logging during debugging
+console.log('=== FUNCTION START ===');
+console.log('Input parameters:', { param1, param2 });
+
+try {
+  // Test DB connection
+  await Database.query('SELECT 1');
+  console.log('Database connection successful');
+  
+  // Continue with business logic...
+} catch (error) {
+  console.error('Detailed error:', {
+    message: error.message,
+    stack: error.stack,
+    context: 'specific operation'
+  });
+  throw error;
+}
+```
+
+**Date**: August 30, 2024
+
+---
+
 ## Future Considerations
 
 ### Scalability: Prepared for Growth
