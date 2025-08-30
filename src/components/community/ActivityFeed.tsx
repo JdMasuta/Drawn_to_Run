@@ -30,7 +30,8 @@ export function ActivityFeed({
   } = useQuery({
     queryKey: ['activity-feed', limit, offset],
     queryFn: async (): Promise<ActivityFeedResponse> => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
+      
       const response = await fetch(`/api/activity/feed?limit=${limit}&offset=${offset}`, {
         headers: {
           Authorization: `Bearer ${token}`,

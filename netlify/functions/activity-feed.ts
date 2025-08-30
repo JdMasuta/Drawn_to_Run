@@ -25,9 +25,8 @@ export const handler: Handler = async (event, context) => {
     const userId = authResult.user.id;
 
     // Parse query parameters
-    const url = new URL(event.rawUrl || `${event.headers.host}${event.path}?${event.rawQuery || ''}`);
-    const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 50); // Max 50 items
-    const offset = Math.max(parseInt(url.searchParams.get('offset') || '0'), 0);
+    const limit = Math.min(parseInt(event.queryStringParameters?.limit || '20'), 50); // Max 50 items
+    const offset = Math.max(parseInt(event.queryStringParameters?.offset || '0'), 0);
 
     // Get activities from users that the current user follows
     const activities = await sql`

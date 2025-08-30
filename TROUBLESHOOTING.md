@@ -289,6 +289,69 @@ const getConnection = () => {
 
 ### Authentication Issues
 
+#### Problem: "Authentication required" with Valid Login
+**Error**: 
+```
+{"success":false,"error":{"message":"Authentication required","code":"UNAUTHORIZED"}}
+```
+
+**Symptoms**: 
+- User can log in successfully but API calls fail with authentication errors
+- Network requests show `Authorization: Bearer null` in headers
+- localStorage contains authentication data but components can't access it
+
+**Root Cause**: Components using incorrect localStorage key for JWT token retrieval
+
+**Diagnostic Steps**:
+1. **Check localStorage contents**:
+   ```javascript
+   console.log('localStorage keys:', Object.keys(localStorage));
+   console.log('All localStorage:', { ...localStorage });
+   ```
+
+2. **Inspect network requests**:
+   - Open DevTools → Network tab
+   - Check Authorization header in failed API requests
+   - Look for "Bearer null" or "Bearer undefined"
+
+3. **Verify token storage key**:
+   - Login system stores JWT under `'auth_token'` key
+   - Check if component uses different key like `'token'`
+
+**Solution**:
+```typescript
+// ❌ Incorrect - causes authentication failures
+const token = localStorage.getItem('token');
+
+// ✅ Correct - use standardized key
+const token = localStorage.getItem('auth_token');
+
+// ✅ With error handling
+const token = localStorage.getItem('auth_token');
+if (!token) {
+  // Redirect to login or show error
+  window.location.href = '/login';
+  return;
+}
+```
+
+**Prevention**:
+- Use consistent localStorage keys across all components
+- Consider creating centralized token utilities:
+```typescript
+// utils/auth.ts
+export const getAuthToken = () => localStorage.getItem('auth_token');
+export const setAuthToken = (token: string) => localStorage.setItem('auth_token', token);
+export const removeAuthToken = () => localStorage.removeItem('auth_token');
+```
+
+**Common Variations**:
+- `localStorage.getItem('token')` → should be `'auth_token'`
+- `localStorage.getItem('jwt')` → should be `'auth_token'` 
+- `localStorage.getItem('accessToken')` → should be `'auth_token'`
+
+---
+
 #### Problem: JWT Token Expired Errors
 **Error**: 
 ```

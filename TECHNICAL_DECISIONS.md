@@ -616,6 +616,60 @@ try {
 
 ---
 
+### Frontend localStorage Token Key Standardization
+**Decision**: Establish consistent localStorage key naming convention for JWT tokens across all frontend components
+
+**Context**: Activity feed authentication failure caused by localStorage key mismatch between login system and consuming components
+
+**Problem Discovered**:
+- Login system stores JWT token under `'auth_token'` key
+- ActivityFeed component looked for token under `'token'` key  
+- Result: `localStorage.getItem('token')` returned `null`
+- Impact: "Authorization: Bearer null" headers sent to API
+
+**Alternatives Considered**:
+- Change login system to use `'token'` key: Would break other components already using `'auth_token'`
+- Use multiple key fallback logic: Adds complexity and doesn't solve root consistency issue
+- Create token retrieval utility: Good addition but doesn't prevent future key mismatches
+
+**Rationale**:
+- Consistent key naming prevents authentication failures across components
+- Standardization reduces debugging time for token-related issues  
+- Clear naming convention helps new developers understand storage patterns
+- Type safety can be added with TypeScript constants
+
+**Implementation**:
+- **Primary Key**: `'auth_token'` for JWT tokens (established by login system)
+- **User Data**: `'auth-storage'` for user profile information (existing pattern)
+- **Pattern**: All authentication-related components must use `'auth_token'` key
+- **Future**: Consider TypeScript constants to prevent typos
+
+**Implementation Example**:
+```typescript
+// ✅ Correct usage
+const token = localStorage.getItem('auth_token');
+
+// ❌ Incorrect - causes authentication failures
+const token = localStorage.getItem('token');
+
+// 🔮 Future improvement with constants
+const AUTH_KEYS = {
+  JWT_TOKEN: 'auth_token',
+  USER_DATA: 'auth-storage'
+} as const;
+const token = localStorage.getItem(AUTH_KEYS.JWT_TOKEN);
+```
+
+**Prevention Measures**:
+- Document localStorage key standards in codebase
+- Add utility functions for token retrieval to centralize access
+- Consider TypeScript constants for compile-time key validation
+- Code review checklist should verify localStorage key consistency
+
+**Date**: August 30, 2024
+
+---
+
 ## Future Considerations
 
 ### Scalability: Prepared for Growth
