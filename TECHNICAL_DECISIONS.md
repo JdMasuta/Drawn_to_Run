@@ -475,6 +475,61 @@ CREATE TABLE user_follows (
 
 ---
 
+### Netlify Function Architecture: Flat Structure with Standard Naming
+**Decision**: Use flat directory structure for Netlify Functions with hyphen-separated naming convention
+
+**Context**: Critical deployment issues with nested function structure causing 404 errors on production
+
+**Problem**:
+- Nested structure (`events/[id]/index.ts`) failed to deploy properly
+- Square brackets in function names rejected by Netlify
+- Complex import path resolution issues
+
+**Alternatives Considered**:
+- Keep nested structure with different bundling: Complex workarounds, unreliable
+- Use single monolithic function: Poor maintainability
+- Switch to different hosting platform: Major infrastructure change
+
+**Rationale**:
+- Flat structure eliminates Netlify bundling edge cases
+- Hyphen-separated naming (`events-id.ts`) is reliable and descriptive
+- Consistent import paths (`./_shared/`) reduce complexity
+- Better debugging and deployment reliability
+
+**Implementation**:
+```
+netlify/functions/
+├── events-id.ts              # GET/PUT/DELETE /api/events/:id
+├── events-id-register.ts     # POST /api/events/:id/register
+├── events-id-comments.ts     # GET/POST /api/events/:id/comments
+├── users-id.ts              # GET/PUT /api/users/:id
+├── users-id-follow.ts       # POST/DELETE /api/users/:id/follow
+└── _shared/                 # Shared utilities
+```
+
+**Date**: August 29, 2024
+
+---
+
+### Import Path Convention: Relative Paths for Shared Utilities
+**Decision**: Use `./_shared/` imports for all shared utilities in flat function structure
+
+**Context**: Directory restructure required consistent import path strategy
+
+**Alternatives Considered**:
+- Absolute imports: Complex tsconfig setup for functions
+- Different shared module locations: Inconsistent patterns
+
+**Rationale**:
+- Simple, predictable import pattern
+- Works reliably with Netlify Functions bundler
+- Easy to understand and maintain
+- Consistent across all function files
+
+**Date**: August 29, 2024
+
+---
+
 ## Future Considerations
 
 ### Scalability: Prepared for Growth
@@ -483,6 +538,7 @@ CREATE TABLE user_follows (
 - Database design supports complex queries
 - Component architecture enables code splitting
 - API design supports multiple clients
+- Flat function structure supports easy function addition
 
 ### Technical Debt Management
 **Identified Areas for Future Improvement**:

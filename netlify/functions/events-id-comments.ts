@@ -48,10 +48,18 @@ async function getEventComments(event: HandlerEvent, eventId: number) {
       return responses.notFound('Event not found');
     }
 
-    // Parse query parameters for pagination
-    const queryParams = parseQueryParams(event.rawUrl || `${event.headers.host}${event.path}?${event.rawQuery || ''}`);
-    const page = parseInt(queryParams.page || '1');
-    const limit = Math.min(parseInt(queryParams.limit || '50'), 100); // Max 100 comments per page
+    // Parse query parameters for pagination - use Netlify's queryStringParameters
+    let page = 1;
+    let limit = 50;
+    
+    try {
+      const queryParams = event.queryStringParameters || {};
+      page = Math.max(1, parseInt(queryParams.page || '1'));
+      limit = Math.min(Math.max(1, parseInt(queryParams.limit || '50')), 100); // Between 1-100 comments per page
+    } catch (error) {
+      console.error('Query parameter parsing error:', error);
+      // Use defaults if parsing fails
+    }
 
     // Get comments with user info and threading
     const comments = await Database.query(`
@@ -68,7 +76,7 @@ async function getEventComments(event: HandlerEvent, eventId: number) {
           u.name as user_name,
           u.profile_image as user_profile_image,
           0 as depth,
-          ARRAY[c.created_at, c.id::text] as sort_path
+          ARRAY[c.created_at::text, c.id::text] as sort_path
         FROM comments c
         JOIN users u ON c.user_id = u.id
         WHERE c.event_id = $1 AND c.parent_id IS NULL
@@ -87,7 +95,7 @@ async function getEventComments(event: HandlerEvent, eventId: number) {
           u.name as user_name,
           u.profile_image as user_profile_image,
           ct.depth + 1,
-          ct.sort_path || ARRAY[c.created_at, c.id::text]
+          ct.sort_path || ARRAY[c.created_at::text, c.id::text]
         FROM comments c
         JOIN users u ON c.user_id = u.id
         JOIN comment_tree ct ON c.parent_id = ct.id
