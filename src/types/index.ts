@@ -284,3 +284,38 @@ export interface PasswordChangeFormData {
   new_password: string;
   confirm_password: string;
 }
+
+// Activity feed types
+export type ActivityType = 
+  | 'user_registered' 
+  | 'user_followed' 
+  | 'event_created' 
+  | 'event_completed'
+  | 'comment_posted';
+
+export interface Activity {
+  id: number;
+  user_id: number;
+  type: ActivityType;
+  target_type: 'event' | 'user' | 'comment';
+  target_id: number;
+  metadata?: Record<string, any>;
+  created_at: string;
+  // Populated relationships
+  user?: User;
+  target_event?: Event;
+  target_user?: User;
+  target_comment?: Comment;
+}
+
+export interface ActivityFeedResponse {
+  activities: Activity[];
+  total: number;
+  hasMore: boolean;
+}
+
+export interface ActivityCardProps {
+  activity: Activity;
+  onUserClick?: (userId: number) => void;
+  onEventClick?: (eventId: number) => void;
+}

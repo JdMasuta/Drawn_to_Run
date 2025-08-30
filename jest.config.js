@@ -6,6 +6,44 @@ export default {
   // Setup files
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   
+  // Projects for different test environments
+  projects: [
+    {
+      // Frontend tests (React components)
+      displayName: 'frontend',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
+        '<rootDir>/src/**/*.(test|spec).(ts|tsx|js)',
+      ],
+      setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+      moduleNameMapper: {
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+        '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/__mocks__/fileMock.js',
+      },
+    },
+    {
+      // Netlify function tests (Node.js environment)
+      displayName: 'functions',
+      testEnvironment: 'node',
+      testMatch: [
+        '<rootDir>/netlify/functions/**/__tests__/**/*.(ts|js)',
+        '<rootDir>/netlify/functions/**/*.(test|spec).(ts|js)',
+      ],
+      setupFilesAfterEnv: ['<rootDir>/netlify/functions/__tests__/setup.ts'],
+      testTimeout: 15000, // Longer timeout for database operations
+      preset: 'ts-jest/presets/default-esm',
+      extensionsToTreatAsEsm: ['.ts'],
+      transform: {
+        '^.+\\.ts$': ['ts-jest', {
+          useESM: true,
+          tsconfig: './tsconfig.test.json'
+        }],
+      },
+      moduleFileExtensions: ['ts', 'js', 'json'],
+    },
+  ],
+  
   // Module file extensions
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   

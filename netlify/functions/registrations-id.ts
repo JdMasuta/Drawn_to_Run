@@ -1,9 +1,9 @@
 // Individual registration management endpoint
 import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import { Database } from '../_shared/database.js';
-import { requireAuth, requireRole } from '../_shared/auth.js';
-import { responses, corsResponse } from '../_shared/response.js';
-import { validateInput, schemas, parsePathParams } from '../_shared/validation.js';
+import { Database } from './_shared/database.js';
+import { requireAuth, requireRole } from './_shared/auth.js';
+import { responses, corsResponse } from './_shared/response.js';
+import { validateInput, schemas, parsePathParams } from './_shared/validation.js';
 import { z } from 'zod';
 
 // Registration update schema

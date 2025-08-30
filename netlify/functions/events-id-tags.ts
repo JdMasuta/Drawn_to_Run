@@ -1,9 +1,9 @@
 // Event tags endpoint - Manage tags for specific events
 import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import { Database } from '../../_shared/database.js';
-import { requireRole } from '../../_shared/auth.js';
-import { responses, corsResponse } from '../../_shared/response.js';
-import { validateInput, schemas } from '../../_shared/validation.js';
+import { Database } from './_shared/database.js';
+import { requireRole } from './_shared/auth.js';
+import { responses, corsResponse } from './_shared/response.js';
+import { validateInput, schemas } from './_shared/validation.js';
 
 const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
   // Handle CORS preflight

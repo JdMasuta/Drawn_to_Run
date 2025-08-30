@@ -1,8 +1,8 @@
 // Authentication utilities for Netlify functions
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { Database } from './database.js';
-import { responses } from './response.js';
+import { Database } from './database';
+import { responses } from './response';
 
 export interface User {
   id: number;

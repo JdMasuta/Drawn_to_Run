@@ -73,13 +73,13 @@ export const EventCreateForm: React.FC<EventCreateFormProps> = ({
       const eventData: CreateEventRequest = {
         title: data.title,
         description: data.description || undefined,
-        event_date: data.event_date,
+        event_date: new Date(data.event_date).toISOString(),
         location: data.location,
         distance_options: data.distance_options.map(d => d.value).filter(Boolean),
         capacity: data.capacity || undefined,
         registration_fee: data.registration_fee || undefined,
         early_bird_fee: data.early_bird_fee || undefined,
-        early_bird_deadline: data.early_bird_deadline || undefined,
+        early_bird_deadline: data.early_bird_deadline ? new Date(data.early_bird_deadline + 'T00:00:00').toISOString() : undefined,
       };
 
       const newEvent = await EventService.createEvent(eventData);

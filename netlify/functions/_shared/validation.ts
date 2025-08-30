@@ -1,6 +1,6 @@
 // Request validation utilities using Zod
 import { z } from 'zod';
-import { responses } from './response.js';
+import { responses } from './response';
 
 // Common validation schemas
 export const schemas = {
@@ -100,7 +100,7 @@ export function validateInput<T>(
     return { success: true, data: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorDetails = error.errors.map(err => ({
+      const errorDetails = error.issues.map((err: any) => ({
         field: err.path.join('.'),
         message: err.message,
       }));

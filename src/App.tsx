@@ -9,6 +9,7 @@ import CreateEventPage from './pages/CreateEventPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
                   <Route path="/events/create" element={<CreateEventPage />} />
                   <Route path="/events/:id" element={<EventDetailPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/dashboard" element={<div className="p-8 text-center">Dashboard page coming soon!</div>} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/community" element={<div className="p-8 text-center">Community page coming soon!</div>} />
                   <Route path="/about" element={<div className="p-8 text-center">About page coming soon!</div>} />
                 </Routes>

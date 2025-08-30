@@ -1,11 +1,11 @@
 // Events list and create endpoint
 import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import { Database } from '../_shared/database.js';
-import { requireRole, requireAuth } from '../_shared/auth.js';
-import { responses, corsResponse } from '../_shared/response.js';
-import { validateInput, schemas, parseQueryParams } from '../_shared/validation.js';
+import { Database } from './_shared/database';
+import { requireRole } from './_shared/auth';
+import { responses, corsResponse } from './_shared/response';
+import { validateInput, schemas, parseQueryParams } from './_shared/validation';
 
-const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+const handler: Handler = async (event: HandlerEvent, _context: HandlerContext) => {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return corsResponse();

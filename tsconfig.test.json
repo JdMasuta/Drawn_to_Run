@@ -19,6 +19,7 @@
     "src/**/*",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
+    "netlify/functions/**/*.ts",
     "netlify/functions/**/*.test.ts"
   ],
   "exclude": ["node_modules", "dist"]
