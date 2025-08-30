@@ -43,22 +43,30 @@ export function ActivityFeed({
         throw new Error(errorData.error || 'Failed to load activity feed');
       }
 
-      return response.json();
+      const result = await response.json();
+      
+      // Handle wrapped API response structure
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to load activity feed');
+      }
+      
+      // Unwrap the data from the API response
+      return result.data;
     },
     enabled: true,
   });
 
   // Update activities when new data comes in
   useEffect(() => {
-    if (feedResponse) {
+    if (feedResponse && feedResponse.activities) {
       if (offset === 0) {
         // Initial load or refresh
-        setActivities(feedResponse.activities);
+        setActivities(feedResponse.activities || []);
       } else {
         // Load more
-        setActivities(prev => [...prev, ...feedResponse.activities]);
+        setActivities(prev => [...prev, ...(feedResponse.activities || [])]);
       }
-      setHasMore(feedResponse.hasMore);
+      setHasMore(feedResponse.hasMore || false);
     }
   }, [feedResponse, offset]);
 

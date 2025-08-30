@@ -177,7 +177,7 @@ export function ActivityCard({ activity, onUserClick, onEventClick }: ActivityCa
             <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500">
               <span>📅 {new Date(activity.target_event.event_date).toLocaleDateString()}</span>
               <span>📍 {activity.target_event.location}</span>
-              {activity.target_event.distance_options.length > 0 && (
+              {activity.target_event.distance_options?.length > 0 && (
                 <span>🏃 {activity.target_event.distance_options.join(', ')}</span>
               )}
             </div>

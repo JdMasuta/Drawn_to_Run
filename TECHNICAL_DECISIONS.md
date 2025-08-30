@@ -670,6 +670,94 @@ const token = localStorage.getItem(AUTH_KEYS.JWT_TOKEN);
 
 ---
 
+### API Response Structure Handling Pattern
+**Decision**: Establish standardized pattern for handling wrapped API responses in frontend components
+
+**Context**: Activity feed experienced JavaScript crashes due to API response structure mismatch
+
+**Problem Discovered**:
+- Backend APIs return data wrapped in success/data structure: `{success: true, data: {...}}`
+- Frontend components expected unwrapped data format: `{activities: [], total: 0, hasMore: false}`
+- Result: `feedResponse.activities` was undefined, causing TypeError on `.length` access
+
+**Alternatives Considered**:
+- Change backend APIs to return unwrapped data: Would break other existing components
+- Add response wrapper detection in each component: Inconsistent and error-prone  
+- Create centralized API client: Over-engineering for current scale
+
+**Rationale**:
+- Consistent API response format across all endpoints maintains backend standards
+- Frontend should adapt to backend response structure, not vice versa
+- Standardized unwrapping pattern prevents similar issues across components
+- Defensive programming improves overall application stability
+
+**Implementation Pattern**:
+```typescript
+// Standard API response unwrapping in query functions
+const queryFn = async (): Promise<DataType> => {
+  const response = await fetch('/api/endpoint');
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'API request failed');
+  }
+  
+  const result = await response.json();
+  
+  // Handle wrapped response structure
+  if (!result.success) {
+    throw new Error(result.error || 'API operation failed');
+  }
+  
+  // Unwrap and return the actual data
+  return result.data;
+};
+```
+
+**Defensive Programming Requirements**:
+- **Optional Chaining**: Use `?.` for nested property access
+- **Array Fallbacks**: Provide `|| []` for array operations  
+- **Null Checks**: Validate data existence before processing
+- **Response Validation**: Check success status before unwrapping
+
+**Application Guidelines**:
+1. **All React Query Functions**: Must handle wrapped API responses
+2. **Array Property Access**: Always use optional chaining for nested arrays
+3. **Data Transformation**: Validate structure before processing
+4. **Error Handling**: Handle both HTTP and API-level errors
+
+**Benefits**:
+- Prevents JavaScript crashes from undefined property access
+- Consistent error handling across all API interactions
+- Maintainable pattern for future API integrations
+- Improved application stability and user experience
+
+**Implementation Examples**:
+```typescript
+// ❌ Problematic - assumes unwrapped response
+return response.json();
+
+// ✅ Correct - handles wrapped response
+const result = await response.json();
+if (!result.success) throw new Error(result.error);
+return result.data;
+
+// ❌ Dangerous - can crash on null arrays
+{data.items.length > 0 && <ItemsList />}
+
+// ✅ Safe - defensive programming
+{data.items?.length > 0 && <ItemsList />}
+```
+
+**Monitoring and Prevention**:
+- Code review checklist should verify API response handling
+- TypeScript interfaces should reflect actual API response structure
+- Consider API response validation utilities for complex endpoints
+
+**Date**: August 30, 2024
+
+---
+
 ## Future Considerations
 
 ### Scalability: Prepared for Growth
