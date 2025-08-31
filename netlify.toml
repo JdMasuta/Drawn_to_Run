@@ -52,6 +52,16 @@
   status = 200
 
 [[redirects]]
+  from = "/api/activity-feed-public"
+  to = "/.netlify/functions/activity-feed-public"
+  status = 200
+
+[[redirects]]
+  from = "/api/stats"
+  to = "/.netlify/functions/stats"
+  status = 200
+
+[[redirects]]
   from = "/api/events"
   to = "/.netlify/functions/events"
   status = 200

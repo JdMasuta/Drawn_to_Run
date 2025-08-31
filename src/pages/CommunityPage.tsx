@@ -1,9 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useCommunityStats } from '../hooks/useStats';
+import { usePublicActivityFeed } from '../hooks/usePublicActivityFeed';
+import { Loader2 } from 'lucide-react';
 
 const CommunityPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const { data: stats, isLoading: statsLoading, error: statsError } = useCommunityStats();
+  const { data: activityFeed, isLoading: activityLoading, error: activityError } = usePublicActivityFeed(3);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,21 +56,39 @@ const CommunityPage: React.FC = () => {
         {/* Community Stats */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-12">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Community Highlights</h2>
+          {statsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+              <span className="ml-2 text-gray-600">Loading community stats...</span>
+            </div>
+          ) : statsError ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600">Unable to load community stats. Showing approximate values.</p>
+            </div>
+          ) : null}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">500+</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {stats?.community.activeMembers.toLocaleString() || '500'}+
+              </div>
               <div className="text-sm text-gray-600">Active Members</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">150+</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats?.community.totalEvents.toLocaleString() || '150'}+
+              </div>
               <div className="text-sm text-gray-600">Events Hosted</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">2,500+</div>
+              <div className="text-2xl font-bold text-orange-600">
+                {stats?.community.estimatedMilesRun.toLocaleString() || '2,500'}+
+              </div>
               <div className="text-sm text-gray-600">Miles Run Together</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">25+</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {stats?.community.totalCities.toLocaleString() || '25'}+
+              </div>
               <div className="text-sm text-gray-600">Cities Connected</div>
             </div>
           </div>
@@ -136,47 +159,52 @@ const CommunityPage: React.FC = () => {
             )}
           </div>
           
-          {/* Sample Activity Items */}
-          <div className="space-y-4">
-            <div className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                JD
-              </div>
-              <div className="flex-1">
-                <div className="text-sm">
-                  <span className="font-medium text-gray-900">John D.</span> registered for the 
-                  <span className="font-medium text-blue-600"> Central Park 5K Fun Run</span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">2 hours ago</div>
-              </div>
+          {/* Activity Items */}
+          {activityLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+              <span className="ml-2 text-gray-600">Loading recent activity...</span>
             </div>
-            
-            <div className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                SM
-              </div>
-              <div className="flex-1">
-                <div className="text-sm">
-                  <span className="font-medium text-gray-900">Sarah M.</span> completed the 
-                  <span className="font-medium text-green-600"> Brooklyn Bridge 10K</span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">5 hours ago</div>
-              </div>
+          ) : activityError ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600">Unable to load recent activity. Please check back later.</p>
             </div>
-            
-            <div className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50">
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                MR
-              </div>
-              <div className="flex-1">
-                <div className="text-sm">
-                  <span className="font-medium text-gray-900">Mike R.</span> commented on 
-                  <span className="font-medium text-orange-600"> Marathon Training Tips</span>
+          ) : (
+            <div className="space-y-4">
+              {activityFeed?.activities.map((activity) => (
+                <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50">
+                  <div className={`w-8 h-8 ${activity.user.avatarColor} rounded-full flex items-center justify-center text-white text-sm font-medium`}>
+                    {activity.user.initials}
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-900">{activity.user.displayName}</span> {activity.message} 
+                      <span className={`font-medium ${
+                        activity.type === 'registration' ? 'text-blue-600' :
+                        activity.type === 'comment' ? 'text-orange-600' : 'text-green-600'
+                      }`}>
+                        {' '}{activity.event.title}
+                      </span>
+                      {activity.distance && (
+                        <span className="text-gray-600"> ({activity.distance})</span>
+                      )}
+                    </div>
+                    {activity.content && (
+                      <div className="text-sm text-gray-600 mt-1 italic">
+                        "{activity.content}"
+                      </div>
+                    )}
+                    <div className="text-xs text-gray-500 mt-1">{activity.timeAgo}</div>
+                  </div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">1 day ago</div>
-              </div>
+              ))}
+              {activityFeed?.activities.length === 0 && (
+                <div className="text-center py-8 text-gray-600">
+                  No recent activity yet. Be the first to register for an event!
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
 
         {/* Call to Action */}

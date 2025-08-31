@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CommunityPage from '../CommunityPage';
 
 // Mock useAuth hook
@@ -8,9 +9,28 @@ jest.mock('../../hooks/useAuth', () => ({
   useAuth: jest.fn(),
 }));
 
+// Mock the React Query hooks
+jest.mock('../../hooks/useStats', () => ({
+  useCommunityStats: jest.fn(),
+}));
+
+jest.mock('../../hooks/usePublicActivityFeed', () => ({
+  usePublicActivityFeed: jest.fn(),
+}));
+
 const mockUseAuth = require('../../hooks/useAuth').useAuth as jest.MockedFunction<any>;
+const mockUseCommunityStats = require('../../hooks/useStats').useCommunityStats as jest.MockedFunction<any>;
+const mockUsePublicActivityFeed = require('../../hooks/usePublicActivityFeed').usePublicActivityFeed as jest.MockedFunction<any>;
 
 const renderWithRouter = (component: React.ReactElement, authState = { isAuthenticated: false }) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
   mockUseAuth.mockReturnValue({
     user: authState.isAuthenticated ? { id: 1, name: 'Test User', email: 'test@example.com' } : null,
     isLoading: false,
@@ -20,10 +40,97 @@ const renderWithRouter = (component: React.ReactElement, authState = { isAuthent
     ...authState,
   });
 
+  // Mock the React Query hooks with default data
+  mockUseCommunityStats.mockReturnValue({
+    data: {
+      community: {
+        totalUsers: 500,
+        activeMembers: 350,
+        totalEvents: 150,
+        totalRegistrations: 850,
+        totalCities: 25,
+        estimatedMilesRun: 2500,
+      },
+      growth: {
+        recentUsers: 45,
+        growthRate: 12,
+      },
+      engagement: {
+        averageEventsPerUser: 2.8,
+        averageRegistrationsPerEvent: 5.7,
+      }
+    },
+    isLoading: false,
+    error: null,
+  });
+
+  mockUsePublicActivityFeed.mockReturnValue({
+    data: {
+      activities: [
+        {
+          id: 'placeholder-1',
+          type: 'registration',
+          user: {
+            initials: 'JD',
+            displayName: 'John D.',
+            avatarColor: 'bg-blue-500',
+          },
+          event: {
+            id: 1,
+            title: 'Central Park 5K Fun Run',
+          },
+          message: 'registered for the',
+          distance: '5K',
+          timeAgo: '2 hours ago',
+          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          id: 'placeholder-2',
+          type: 'registration',
+          user: {
+            initials: 'SM',
+            displayName: 'Sarah M.',
+            avatarColor: 'bg-green-500',
+          },
+          event: {
+            id: 2,
+            title: 'Brooklyn Bridge 10K',
+          },
+          message: 'registered for the',
+          distance: '10K',
+          timeAgo: '5 hours ago',
+          created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          id: 'placeholder-3',
+          type: 'comment',
+          user: {
+            initials: 'MR',
+            displayName: 'Mike R.',
+            avatarColor: 'bg-orange-500',
+          },
+          event: {
+            id: 3,
+            title: 'Marathon Training Tips',
+          },
+          message: 'commented on',
+          content: 'Great advice for beginners!',
+          timeAgo: '1 day ago',
+          created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ],
+      total: 3,
+    },
+    isLoading: false,
+    error: null,
+  });
+
   return render(
-    <BrowserRouter>
-      {component}
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        {component}
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 
@@ -49,7 +156,7 @@ describe('CommunityPage', () => {
     it('renders community highlights section', () => {
       renderWithRouter(<CommunityPage />);
       expect(screen.getByRole('heading', { name: /community highlights/i })).toBeInTheDocument();
-      expect(screen.getByText('500+')).toBeInTheDocument();
+      expect(screen.getByText('350+')).toBeInTheDocument();
       expect(screen.getByText('Active Members')).toBeInTheDocument();
     });
 
@@ -140,7 +247,7 @@ describe('CommunityPage', () => {
   describe('Content Quality', () => {
     it('includes engaging community statistics', () => {
       renderWithRouter(<CommunityPage />);
-      expect(screen.getByText('500+')).toBeInTheDocument();
+      expect(screen.getByText('350+')).toBeInTheDocument();
       expect(screen.getByText('150+')).toBeInTheDocument();
       expect(screen.getByText('2,500+')).toBeInTheDocument();
       expect(screen.getByText('25+')).toBeInTheDocument();
