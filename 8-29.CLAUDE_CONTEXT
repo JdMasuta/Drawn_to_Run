@@ -1,0 +1,329 @@
+# Claude Context Document - August 29, 2025
+
+## Project: Drawn to Run
+**Status**: Active Development - Phase 2 Testing Complete
+**Last Updated**: August 29, 2025
+
+## Current Context
+
+### Project Overview
+Building a modern web application for managing running events (5K, 10K, marathons) with a daily.dev-inspired interface, Strava integration, and comprehensive event management features.
+
+**Tech Stack**:
+- Frontend: Vite + React 18 + TypeScript + TailwindCSS
+- Backend: Netlify Functions + Neon PostgreSQL
+- Deployment: Netlify (Production: https://drawn-to-run.netlify.app)
+
+### Recent Work Completed
+Just successfully resolved critical Netlify function deployment issues:
+- **Fixed function structure**: Flattened nested directory structure (`events/[id]/index.ts` → `events-id.ts`)
+- **Resolved naming issues**: Renamed functions to remove square brackets (Netlify restriction)
+- **Updated import paths**: Changed `../../_shared/` to `./_shared/` for all moved functions
+- **Fixed redirects**: Updated netlify.toml to route to new function names
+- **Verified deployment**: All functions now bundle and deploy successfully
+- **Confirmed API functionality**: Event detail API endpoints working properly
+- **Verified UI**: Event detail pages now load completely with full data
+
+### Current Development Phase
+- **Phase 2**: ✅ Test event details API endpoint functionality (COMPLETED)
+- **Phase 3**: 🔄 Test interactive features (registration, comments, sharing) (IN PROGRESS)
+
+---
+
+## Complete Todo List
+
+### Project Foundation
+1. ~~Initialize Vite + React + TypeScript project~~
+2. ~~Configure Netlify deployment settings~~
+3. ~~Set up Neon PostgreSQL database~~
+4. ~~Install core dependencies (React Router, TailwindCSS, etc.)~~
+5. ~~Create basic project structure and folders~~
+6. ~~Set up environment variables and configuration~~
+7. ~~Install testing framework (Jest + React Testing Library)~~
+8. ~~Configure test utilities and database mocks~~
+9. ~~Set up test coverage reporting~~
+10. ~~Create testing conventions and helper functions~~
+11. Unit tests for project foundation and configuration
+
+### Database Setup
+12. ~~Create database schema with all tables~~
+13. ~~Set up @netlify/neon integration~~
+14. ~~Create database seed data for testing~~
+15. ~~Implement database utility functions~~
+16. Set up migrations system
+17. ~~Test database connections~~
+18. Unit tests for database utilities and connection functions
+
+### Authentication System
+19. ~~Implement user registration endpoint~~
+20. ~~Create login/logout functionality~~
+21. ~~Set up JWT token management~~
+22. ~~Build user profile components~~
+23. ~~Create protected route system~~
+24. Unit tests for authentication system (login/logout/JWT/protected routes)
+25. Security audit for authentication system (JWT validation, password hashing, session management)
+
+### Event Management Core
+26. ~~Create event CRUD API endpoints~~
+27. ~~Phase 1: Test event detail page navigation from events listing~~
+28. ~~CRITICAL: Investigate event detail page not loading (empty page)~~
+29. ~~Add explicit netlify.toml redirects for event endpoints~~
+30. ~~Test API endpoint functionality directly in browser~~
+31. ~~Phase 2: Test event details API endpoint functionality~~
+32. **Phase 3: Test interactive features (registration, comments, sharing)**
+33. Phase 4: Test error scenarios and edge cases
+34. ~~Fix any identified routing issues in netlify.toml~~
+35. ~~Debug and fix any API response structure issues~~
+36. Fix any UI/UX issues found during testing
+37. ~~Build event creation form (admin/organizer)~~
+38. ~~Implement event listing page~~
+39. ~~Create event detail page~~
+40. ~~Add basic event registration~~
+41. ~~Set up event capacity management~~
+42. Unit tests for event management (CRUD operations, forms, registration)
+43. Security audit for event management (authorization checks, input validation)
+
+### Daily.dev-style Interface
+44. ~~Design and implement EventCard component~~
+45. ~~Create responsive grid layout for events~~
+46. ~~Build search functionality~~
+47. ~~Implement tag system and filtering~~
+48. ~~Add sorting options (date, distance, popularity)~~
+49. ~~Create pagination system~~
+50. Unit tests for EventCard component and daily.dev interface
+
+### Advanced Filtering & Search
+51. ~~Build FilterSidebar component~~
+52. ~~Implement multi-tag filtering~~
+53. ~~Add location-based search~~
+54. ~~Create date range filtering~~
+55. Implement search autocomplete
+56. Add saved search functionality
+57. Unit tests for filtering and search functionality
+
+### Community Features
+58. ~~Create comments system for events~~
+59. ~~Deploy temporary function to create user_follows table~~
+60. ~~Execute table creation via API call and verify success~~
+61. ~~Remove temporary function after table creation~~
+62. ~~Implement follow/unfollow API endpoints with authorization~~
+63. ~~Create FollowButton component with loading states~~
+64. ~~Build FollowersList and FollowingList components~~
+65. ~~Update UserProfile to show follow functionality~~
+66. ~~Add follower/following counts to UserStats~~
+67. ~~Fix TypeScript build errors in follow components~~
+68. ~~Test complete follow functionality end-to-end~~
+69. ~~Remove incompatible API endpoint tests that expect Lambda format~~
+70. ~~Fix FollowController unit tests~~
+71. ~~Fix component tests (FollowButton, FollowersList, FollowingList)~~
+72. ~~Add netlify.toml redirects for follow endpoints~~
+73. ~~Run test suite to verify all tests pass~~
+74. ~~Build activity feed component~~
+75. Add event rating and review system
+76. ~~Create user profile pages~~
+77. Implement notification system
+78. Unit tests for community features (comments, profile system)
+79. Security audit for community features (profile access, comment validation)
+
+### Testing Infrastructure
+80. ~~Create Netlify Functions test infrastructure (setup, helpers, fixtures)~~
+81. ~~Build function testing framework with mock events and contexts~~
+82. ~~Create authentication function tests (register, login, me, logout)~~
+83. ~~Fix TypeScript errors in Netlify function tests~~
+84. ~~Navigate to live production deployment for testing~~
+85. ~~Identify events listing API behavior on production site~~
+86. ~~Test event listing API endpoint with production database~~
+87. ~~Test authentication endpoints with production environment~~
+88. ~~Test event creation API endpoint with authentication~~
+89. ~~Test event detail API endpoint~~
+90. ~~Test event registration API endpoint~~
+91. ~~Test event comments API endpoint~~
+92. ~~Identify routing issues with dynamic event endpoints~~
+93. ~~Document production API behavior and performance~~
+94. ~~Fix Netlify dynamic routing configuration for event endpoints~~
+
+### User Experience Testing
+95. ~~Phase 1: Create test account and verify initial login~~
+96. ~~Navigate to registration page and create test account~~
+97. ~~Verify successful account creation~~
+98. ~~Test initial login with created credentials~~
+99. ~~Request manual role assignment to organizer~~
+100. ~~Phase 2: Test guest/public user experience~~
+101. ~~Test guest homepage navigation and layout~~
+102. ~~Test events page filtering and search functionality~~
+103. ~~Test guest user registration protection (redirect to login)~~
+104. ~~Test navigation menu items for guest users~~
+105. ~~Test about and community pages access~~
+106. ~~Phase 3: Test authenticated user core features~~
+107. ~~Login with test account credentials~~
+108. ~~Test authenticated user homepage and navigation~~
+109. Test user profile page and editing functionality
+110. Test dashboard page functionality
+111. Test event registration as authenticated user
+112. Test user menu and logout functionality
+113. ~~Phase 4: Test organizer role functionality~~
+114. ~~Verify organizer role assignment (Create Event button visible)~~
+115. ~~Test Create Event form access and layout~~
+116. ~~Test Create Event form field validation~~
+117. ~~Complete event form with comprehensive test data~~
+118. ~~Test form validation with past dates (successfully caught)~~
+119. ~~Test form validation with missing fields (successfully caught)~~
+120. ~~Test tag selection functionality (3 tags selected successfully)~~
+121. ~~Investigate event submission and database creation~~
+122. ~~Fix datetime format validation causing HTTP 500 error~~
+123. ~~Submit valid event form and monitor API calls~~
+124. ~~Verify event creation in database and events listing~~
+125. ~~Debug any errors in event creation workflow~~
+126. ~~Test actual event creation workflow~~
+127. Test event management capabilities
+128. Phase 5: Comprehensive API integration testing
+129. Phase 6: Mobile and responsive testing
+130. Phase 7: Edge cases and error scenarios testing
+131. Create mock-based unit tests for event function business logic
+132. Create user function tests (profile, follow system)
+133. Create utility function tests (tags, subscribe, activity-feed)
+134. ~~Update Jest configuration for Netlify function testing~~
+
+### Strava Integration Setup
+135. Register application with Strava API
+136. Implement OAuth2 flow for Strava
+137. Create Strava token management
+138. Set up webhook endpoint for activities
+139. Build activity import functionality
+140. Test Strava authentication flow
+141. Unit tests for Strava integration setup
+142. Security audit for Strava integration (OAuth security, token management)
+
+### Strava Data Sync
+143. Implement automatic activity import
+144. Create event completion verification
+145. Build performance analytics
+146. Add training data visualization
+147. Implement webhook processing
+148. Create Strava profile integration
+149. Unit tests for Strava data sync
+
+### Email System
+150. Set up email service integration
+151. ~~Create mailing list signup (no account required)~~
+152. Build email template system
+153. Implement event notification emails
+154. Create unsubscribe functionality
+155. Add email verification system
+156. Unit tests for email system
+157. Security audit for email system (template injection, spam prevention)
+
+### Media Management
+158. Set up Netlify Blobs for file storage
+159. Create file upload components
+160. Implement image optimization
+161. Build media gallery system
+162. Add drag-and-drop upload interface
+163. Create media management dashboard
+164. Unit tests for media management
+165. Security audit for media management (file upload security, access controls)
+
+### Instagram Integration
+166. Set up Instagram Basic Display API
+167. Implement Instagram OAuth flow
+168. Create automatic post fetching
+169. Build hashtag monitoring
+170. Create Instagram gallery displays
+171. Add manual post curation tools
+172. Unit tests for Instagram integration
+173. Security audit for Instagram integration (API key security, data privacy)
+
+### Performance & Optimization
+174. Implement lazy loading for images
+175. ~~Add skeleton loading states~~
+176. Optimize database queries
+177. Set up caching strategies
+178. Implement error boundaries
+179. Add performance monitoring
+180. Unit tests for performance optimizations
+
+### Mobile Responsiveness
+181. Test and fix mobile layouts
+182. Optimize touch interactions
+183. Implement mobile-specific components
+184. Add progressive web app features
+185. Test across different devices
+186. Optimize mobile performance
+187. Unit tests for mobile responsiveness
+
+### Testing & Quality Assurance
+188. Write unit tests for components
+189. Create integration tests for API endpoints
+190. Implement end-to-end testing
+191. Add accessibility testing
+192. Perform security audit
+193. Load testing and optimization
+
+### Production Deployment
+194. ~~Set up production environment variables~~
+195. ~~Configure production database~~
+196. Set up CI/CD pipeline
+197. Implement monitoring and logging
+198. Create backup strategies
+199. ~~Deploy to production and test~~
+
+### Development Infrastructure
+200. ~~Fix TypeScript build errors~~
+201. ~~Deploy project to Netlify~~
+202. ~~Install API dependencies (bcryptjs, jsonwebtoken, zod)~~
+203. ~~Create shared API utilities and middleware~~
+204. ~~Fix 404 errors for authentication endpoints~~
+205. ~~Flatten Netlify functions directory structure~~
+206. ~~Create API router layer~~
+207. ~~Create controller layer (Auth, Event, User)~~
+208. ~~Update service layer to use controllers~~
+209. ~~Update Netlify configuration for new structure~~
+210. ~~Test authentication flow end-to-end~~
+211. ~~Fix API 500 errors for events endpoint~~
+212. ~~Create EventCreateForm component~~
+213. ~~Add create event route to App.tsx~~
+214. ~~Add create event navigation in Header~~
+215. ~~Test event creation workflow~~
+216. ~~Create EventCard component~~
+217. ~~Create EventService for data fetching~~
+218. ~~Update EventsPage with real data~~
+219. ~~Create EventDetailPage~~
+220. ~~Add event detail route to App.tsx~~
+221. ~~Fix 'No Events Found' data structure mismatch~~
+222. ~~Create FilterSidebar component~~
+223. ~~Implement search and filter logic~~
+224. ~~Set up React Query for server state~~
+225. ~~Create TagService and useTagsQuery hook~~
+226. ~~Build TagChip and TagFilter components~~
+227. ~~Enhance FilterSidebar with tag filtering~~
+228. ~~Update EventCreateForm with tag selection~~
+229. ~~Add tag assignment API endpoints~~
+230. ~~Create UserAvatar component~~
+231. ~~Build UserProfile page with tabs~~
+232. ~~Create UserEventHistory component~~
+233. ~~Create UserRegistrations component~~
+234. ~~Create ProfileEditForm component~~
+235. ~~Create UserStats component~~
+236. ~~Create LoadingSpinner component~~
+237. ~~Build DashboardPage for authenticated users~~
+238. ~~Add user profile API endpoints~~
+239. ~~Update routing for profile and dashboard~~
+240. ~~Set up authentication state management~~
+241. ~~Build login/register forms with validation~~
+242. ~~Update header with user menu~~
+243. ~~Implement protected routes~~
+
+### Documentation
+244. ~~Create DEVELOPMENT_HISTORY.md with comprehensive session documentation~~
+245. ~~Create TECHNICAL_DECISIONS.md documenting architectural choices~~
+246. ~~Create KNOWN_ISSUES.md for current technical debt tracking~~
+247. ~~Create TROUBLESHOOTING.md for common problems and solutions~~
+248. ~~Update CLAUDE.md workflow to include documentation step~~
+249. ~~Document all completed development sessions from git history~~
+
+### Critical Bug Fixes (Recently Completed)
+250. ~~Identify and fix HTTP 500 error in event creation API endpoint~~
+251. ~~Investigate React component loading issues for empty EventDetailPage~~
+252. ~~Check JavaScript bundle loading for SPA routing issues~~
+253. ~~Fix Netlify nested function deployment and routing configuration~~
+254. ~~Fix import paths in moved functions for flat structure~~

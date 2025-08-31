@@ -17,6 +17,14 @@ export default {
         '<rootDir>/src/**/*.(test|spec).(ts|tsx|js)',
       ],
       setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+      preset: 'ts-jest/presets/default-esm',
+      extensionsToTreatAsEsm: ['.ts', '.tsx'],
+      transform: {
+        '^.+\\.(ts|tsx)$': ['ts-jest', {
+          useESM: true,
+          tsconfig: './tsconfig.test.json'
+        }],
+      },
       moduleNameMapper: {
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/__mocks__/fileMock.js',
